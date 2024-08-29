@@ -1,6 +1,8 @@
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import BookList from '../screens/BookList';
 import FilterScreen from '../screens/FilterScreen';
+import BookDetail from '../screens/BookDetail';
+import {navigationConstants} from '../utils/constants';
 
 const Stack = createNativeStackNavigator();
 
@@ -11,7 +13,14 @@ export function AppNavigator() {
         headerShown: false,
       }}>
       <Stack.Group>
-        <Stack.Screen name="BookList" component={BookList} />
+        <Stack.Screen
+          name={navigationConstants.BookList}
+          component={BookList}
+        />
+        <Stack.Screen
+          name={navigationConstants.BookDetail}
+          component={BookDetail}
+        />
       </Stack.Group>
       <Stack.Group
         screenOptions={{
@@ -19,9 +28,8 @@ export function AppNavigator() {
           contentStyle: {backgroundColor: 'rgba(0,0,0,0.5)'},
         }}>
         <Stack.Screen
-          name="Filter"
+          name={navigationConstants.Filter}
           component={FilterScreen}
-          // options={{title: 'Filter Books'}}
         />
       </Stack.Group>
     </Stack.Navigator>
