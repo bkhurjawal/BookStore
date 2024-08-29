@@ -77,7 +77,7 @@ Axios is used to fetch data from the API. The API URL is stored in a constants f
 2. Navigate to the project directory:
 
    ```bash
-   cd vdb
+   cd BookStore
    ```
 
 3. Install the dependencies:
