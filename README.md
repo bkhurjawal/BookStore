@@ -1,8 +1,94 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+Here is a draft for your README file, which includes the necessary details about the project, Context API usage, technical specifications, and instructions on how to run the app locally.
 
-# Getting Started
+---
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+# Book Shelf App
+
+## Overview
+
+The Book Shelf App is a React Native application that displays a list of books, allowing users to filter by category and search by title. The app is designed to be scalable and easy to maintain, using the Context API for state management and Axios for API requests.
+
+## Features
+
+- **Book List:** Displays a list of books fetched from an API.
+- **Filtering:** Filter books by category or search by title.
+- **Pagination:** Paginate through the list of books.
+- **Book Details:** View detailed information about a selected book.
+
+## Technical Specifications
+
+- **React Native:** The app is built using React Native, allowing it to run on both iOS and Android devices.
+- **TypeScript:** TypeScript is used for type safety and better developer experience.
+- **Context API:** Used for global state management, including the book list and filter state.
+- **Axios:** Used for making HTTP requests to the API.
+- **Jest:** Testing framework used for unit tests.
+
+## Project Structure
+
+```
+/src
+│
+├── /components
+│   ├── Pagination.tsx
+│
+├── /context
+│   ├── BookContext.js
+│
+│
+├── /screens
+│   ├── BookList.tsx
+│   ├── FilterScreen.tsx
+│   └── BookDetail.tsx
+
+│
+├── /utils
+│   ├── constants.ts
+│   └── utilFunctions.ts
+│
+└── App.tsx
+```
+
+### Context API Usage
+
+The Context API is used to manage the state of the book list and filtering options. The `BookContext` is created in the `/context/BookContext.tsx` file and provides the global state and functions to update the state.
+
+### Axios for API Requests
+
+Axios is used to fetch data from the API. The API URL is stored in a constants file (`/utils/constants.ts`), and the API requests are made in the `BookProvider`.
+
+## Running the Project Locally
+
+### Prerequisites
+
+- **Node.js:** Make sure you have Node.js installed. You can download it from [here](https://nodejs.org/).
+- **React Native CLI:** You need the React Native CLI to run the project. Install it globally using the following command:
+
+  ```bash
+  npm install -g react-native-cli
+  ```
+
+- **Xcode:** (For iOS) Make sure Xcode is installed and set up.
+- **Android Studio:** (For Android) Make sure Android Studio is installed and set up.
+
+### Installation
+
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/bkhurjawal/BookStore.git
+   ```
+
+2. Navigate to the project directory:
+
+   ```bash
+   cd vdb
+   ```
+
+3. Install the dependencies:
+
+   ```bash
+   npm install
+   ```
 
 ## Step 1: Start the Metro Server
 
@@ -46,34 +132,10 @@ If everything is set up _correctly_, you should see your new app running in your
 
 This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
 
-## Step 3: Modifying your App
+### Running Tests
 
-Now that you have successfully run the app, let's modify it.
+To run the unit tests:
 
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
-
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+```bash
+npm test
+```

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -19,6 +19,8 @@ import {
   navigationConstants,
   title,
 } from '../utils/constants';
+import {BookContext} from '../Context/BookContext';
+import ContentLoader from 'react-native-easy-content-loader';
 
 export type Book = {
   id: number;
@@ -35,7 +37,8 @@ type BookListProps = {
 };
 
 const BookList: React.FC<BookListProps> = ({navigation, route}) => {
-  const [books, setBooks] = useState<Book[]>([]);
+  // const [books, setBooks] = useState<Book[]>([]);
+  const {books, loading, error} = useContext(BookContext);
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [booksPerPage] = useState(9); // Number of books per page
@@ -53,37 +56,19 @@ const BookList: React.FC<BookListProps> = ({navigation, route}) => {
     }
   }, [route.params?.filter]);
 
-  useEffect(() => {
-    const fetchBooks = async () => {
-      try {
-        const response = await axios.get(jsonUrl);
-        const updatedBooks = response.data.map((book: {thumbnail: string}) => ({
-          ...book,
-          thumbnail: book.thumbnail.replace('http://', 'https://'),
-          author: 'Chandeli',
-          description: 'lorem ipsun lol',
-        }));
-
-        setBooks(updatedBooks);
-        setFilteredBooks(updatedBooks);
-      } catch (error) {
-        console.error('Error fetching the books:', error);
-      }
-    };
-    fetchBooks();
-  }, []);
-
   // Update filteredBooks when searchTerm or selectedCategory changes
   useEffect(() => {
     let filtered = books;
 
     if (selectedCategory) {
-      filtered = filtered.filter(book => book.category === selectedCategory);
+      filtered = filtered.filter(
+        (book: {category: string}) => book.category === selectedCategory,
+      );
       setSearchTerm('');
     }
 
     if (searchTerm) {
-      filtered = filtered.filter(book =>
+      filtered = filtered.filter((book: {title: string}) =>
         book.title.toLowerCase().includes(searchTerm.toLowerCase()),
       );
       setSelectedCategory(null);
@@ -123,6 +108,24 @@ const BookList: React.FC<BookListProps> = ({navigation, route}) => {
       <Text style={styles.category}>{item.category}</Text>
     </TouchableOpacity>
   );
+
+  if (loading) {
+    return (
+      <>
+        <ContentLoader
+          avatar
+          loading
+          aShape={'square'}
+          listSize={23}
+          // pWidth={[100, 70, 100]}
+        />
+      </>
+    );
+  }
+
+  if (error) {
+    return <Text>Error fetching books: {error.message}</Text>;
+  }
 
   return (
     <View style={styles.container}>

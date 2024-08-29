@@ -3,16 +3,18 @@ import {SafeAreaView, StyleSheet} from 'react-native';
 
 import {NavigationContainer} from '@react-navigation/native';
 
-import Home from './src/screens/BookList';
+import {BookProvider} from './src/Context/BookContext';
 import {AppNavigator} from './src/navigator/AppNavigator';
 
 function App(): React.JSX.Element {
   return (
-    <NavigationContainer>
-      <SafeAreaView style={styles.container}>
-        <AppNavigator />
-      </SafeAreaView>
-    </NavigationContainer>
+    <BookProvider>
+      <NavigationContainer>
+        <SafeAreaView style={styles.container}>
+          <AppNavigator />
+        </SafeAreaView>
+      </NavigationContainer>
+    </BookProvider>
   );
 }
 
