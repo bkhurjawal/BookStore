@@ -52,6 +52,9 @@ const BookList: React.FC<BookListProps> = ({navigation, route}) => {
       if (route?.params?.filter === category) {
         setSelectedCategory(categories[0]); //default selection
       }
+      if (route?.params?.filter === title) {
+        setSelectedCategory(null); //default selection
+      }
       setCurrentPage(1);
     }
   }, [route.params?.filter]);
