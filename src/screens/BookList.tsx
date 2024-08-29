@@ -1,23 +1,34 @@
 import axios from 'axios';
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
-  TextInput,
-  Button,
 } from 'react-native';
 import Pagination from '../components/Pagination';
+import {
+  categories,
+  category,
+  filterImageUrl,
+  jsonUrl,
+  navigationConstants,
+  title,
+} from '../utils/constants';
+import {BookContext} from '../Context/BookContext';
+import ContentLoader from 'react-native-easy-content-loader';
 
-type Book = {
+export type Book = {
   id: number;
   title: string;
   thumbnail: string;
   category: string;
+  description: string;
+  author: string;
 };
 
 type BookListProps = {
@@ -25,60 +36,39 @@ type BookListProps = {
   route: any;
 };
 
-const categories = [
-  'Fiction',
-  'Non-Fiction',
-  'Science',
-  'History',
-  'Biography',
-  'Fantasy',
-];
-
 const BookList: React.FC<BookListProps> = ({navigation, route}) => {
-  const [books, setBooks] = useState<Book[]>([]);
+  // const [books, setBooks] = useState<Book[]>([]);
+  const {books, loading, error} = useContext(BookContext);
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [booksPerPage] = useState(10); // Number of books per page
+  const [booksPerPage] = useState(9); // Number of books per page
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [filterBy, setFilterBy] = useState('none');
   const [searchTerm, setSearchTerm] = useState('');
-  const jsonUrl = 'https://www.jsonkeeper.com/b/XY62';
 
   useEffect(() => {
     if (route.params?.filter) {
       setFilterBy(route?.params?.filter);
+      if (route?.params?.filter === category) {
+        setSelectedCategory(categories[0]); //default selection
+      }
+      setCurrentPage(1);
     }
   }, [route.params?.filter]);
-
-  useEffect(() => {
-    const fetchBooks = async () => {
-      try {
-        const response = await axios.get(jsonUrl);
-        const updatedBooks = response.data.map((book: {thumbnail: string}) => ({
-          ...book,
-          thumbnail: book.thumbnail.replace('http://', 'https://'),
-        }));
-
-        setBooks(updatedBooks);
-        setFilteredBooks(updatedBooks);
-      } catch (error) {
-        console.error('Error fetching the books:', error);
-      }
-    };
-    fetchBooks();
-  }, []);
 
   // Update filteredBooks when searchTerm or selectedCategory changes
   useEffect(() => {
     let filtered = books;
 
     if (selectedCategory) {
-      filtered = filtered.filter(book => book.category === selectedCategory);
+      filtered = filtered.filter(
+        (book: {category: string}) => book.category === selectedCategory,
+      );
       setSearchTerm('');
     }
 
     if (searchTerm) {
-      filtered = filtered.filter(book =>
+      filtered = filtered.filter((book: {title: string}) =>
         book.title.toLowerCase().includes(searchTerm.toLowerCase()),
       );
       setSelectedCategory(null);
@@ -103,15 +93,39 @@ const BookList: React.FC<BookListProps> = ({navigation, route}) => {
   const currentBooks = filteredBooks.slice(indexOfFirstBook, indexOfLastBook);
 
   const renderBook = ({item}: {item: Book}) => (
-    <View style={styles.bookItem}>
+    <TouchableOpacity
+      style={styles.bookItem}
+      onPress={() =>
+        navigation.navigate(navigationConstants.BookDetail, {
+          bookdetail: item,
+        })
+      }>
       <Image
         source={{uri: `${item.thumbnail}?random=${new Date().getTime()}`}}
         style={styles.thumbnail}
       />
       <Text style={styles.title}>{item.title}</Text>
       <Text style={styles.category}>{item.category}</Text>
-    </View>
+    </TouchableOpacity>
   );
+
+  if (loading) {
+    return (
+      <>
+        <ContentLoader
+          avatar
+          loading
+          aShape={'square'}
+          listSize={23}
+          // pWidth={[100, 70, 100]}
+        />
+      </>
+    );
+  }
+
+  if (error) {
+    return <Text>Error fetching books: {error.message}</Text>;
+  }
 
   return (
     <View style={styles.container}>
@@ -125,16 +139,15 @@ const BookList: React.FC<BookListProps> = ({navigation, route}) => {
               filter: filterBy,
             })
           }>
-          {/* <Text style={styles.header}>Filter</Text> */}
           <Image
             style={{height: 30, width: 30, resizeMode: 'contain'}}
             source={{
-              uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQw5VCiRMI-cC2Gig51nF1tFtSc_rkMEVOvJzIACrtQRjJnAIb_lPhzzuiPvuC5nwJfXBE&usqp=CAU',
+              uri: filterImageUrl,
             }}
           />
         </TouchableOpacity>
       </View>
-      {filterBy === 'category' && (
+      {filterBy === category && (
         <>
           {/* Category Filter */}
           <ScrollView
@@ -156,7 +169,7 @@ const BookList: React.FC<BookListProps> = ({navigation, route}) => {
           </ScrollView>
         </>
       )}
-      {filterBy === 'title' && (
+      {filterBy === title && (
         <>
           <Text style={styles.label}>Search by Title</Text>
           <TextInput
@@ -175,6 +188,11 @@ const BookList: React.FC<BookListProps> = ({navigation, route}) => {
         keyExtractor={item => item.id.toString()}
         contentContainerStyle={styles.bookList}
         numColumns={3} // Display 3 columns
+        ListEmptyComponent={() => (
+          <View>
+            <Text> No books available</Text>
+          </View>
+        )}
       />
 
       {/* Pagination Component */}
@@ -190,7 +208,7 @@ const BookList: React.FC<BookListProps> = ({navigation, route}) => {
   );
 };
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,

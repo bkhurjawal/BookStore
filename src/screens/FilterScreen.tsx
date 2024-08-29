@@ -1,16 +1,14 @@
-import {RouteProp} from '@react-navigation/native';
-import React, {useState} from 'react';
+import React, {memo} from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
   StyleSheet,
-  Button,
+  Text,
   TextStyle,
+  TouchableOpacity,
+  View,
   ViewStyle,
 } from 'react-native';
+import {category, navigationConstants, none, title} from '../utils/constants';
+import {getButtonStyle} from '../utils/utilFunctions';
 
 // Define the types for route and navigation props
 
@@ -21,35 +19,18 @@ interface FilterScreenProps {
 
 const FilterScreen: React.FC<FilterScreenProps> = ({navigation, route}) => {
   const {filter} = route?.params;
-  console.log('filter', filter);
-  const getLabelStyle = (isActive: boolean): TextStyle => ({
-    color: isActive ? 'white' : 'black',
-  });
-  const getButtonStyle = (isActive: boolean): ViewStyle => ({
-    backgroundColor: isActive ? 'black' : 'white',
-  });
 
   return (
-    <View style={{flex: 1, marginTop: 50}}>
+    <View style={styles.container}>
       <TouchableOpacity
-        style={{flexDirection: 'row-reverse', margin: 10}}
+        style={styles.closeButtonContainer}
         onPress={() => navigation.goBack()}>
-        <Text style={{fontSize: 25, fontWeight: '600', color: 'white'}}>X</Text>
+        <Text style={styles.closeButton}>X</Text>
       </TouchableOpacity>
-      <View
-        style={{
-          flex: 2,
-          alignItems: 'center',
-          justifyContent: 'center',
-
-          marginHorizontal: 10,
-        }}>
+      <View style={styles.filterAlignment}>
         <View style={{flexDirection: 'row'}}>
-          <View
-            style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{fontSize: 20, color: 'white', fontWeight: '500'}}>
-              Filter By:
-            </Text>
+          <View style={styles.filterByContainer}>
+            <Text style={styles.filterByText}>Filter By:</Text>
           </View>
           <View
             style={{
@@ -61,41 +42,34 @@ const FilterScreen: React.FC<FilterScreenProps> = ({navigation, route}) => {
               style={[styles.button, getButtonStyle(filter === 'category')]}
               onPress={() =>
                 navigation.navigate({
-                  name: 'BookList',
-                  params: {filter: 'category'},
+                  name: navigationConstants.BookList,
+                  params: {filter: category},
                   merge: true,
                 })
               }>
-              <Text
-                style={[styles.label, getLabelStyle(filter === 'category')]}>
-                Category
-              </Text>
+              <Text style={[styles.label]}>Category</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.button, getButtonStyle(filter === 'title')]}
+              style={[styles.button, getButtonStyle(filter === title)]}
               onPress={() =>
                 navigation.navigate({
-                  name: 'BookList',
-                  params: {filter: 'title'},
+                  name: navigationConstants.BookList,
+                  params: {filter: title},
                   merge: true,
                 })
               }>
-              <Text style={[styles.label, getLabelStyle(filter === 'title')]}>
-                Title
-              </Text>
+              <Text style={[styles.label]}>Title</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={[styles.button, getButtonStyle(filter === 'none')]}
+              style={[styles.button, getButtonStyle(filter === none)]}
               onPress={() =>
                 navigation.navigate({
-                  name: 'BookList',
-                  params: {filter: 'none'},
+                  name: navigationConstants.BookList,
+                  params: {filter: none},
                   merge: true,
                 })
               }>
-              <Text style={[styles.label, getLabelStyle(filter === 'none')]}>
-                None
-              </Text>
+              <Text style={[styles.label]}>None</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -105,17 +79,27 @@ const FilterScreen: React.FC<FilterScreenProps> = ({navigation, route}) => {
 };
 
 const styles = StyleSheet.create({
+  filterByContainer: {flex: 1, alignItems: 'center', justifyContent: 'center'},
+  filterByText: {fontSize: 20, color: 'white', fontWeight: '500'},
+  container: {flex: 1, marginTop: 50},
+  closeButtonContainer: {flexDirection: 'row-reverse', margin: 10},
+  closeButton: {fontSize: 25, fontWeight: '600', color: 'white'},
+  filterAlignment: {
+    flex: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 10,
+  },
   label: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: '#fff',
   },
   button: {
-    borderWidth: 2,
-    borderColor: 'black',
     padding: 10,
     backgroundColor: 'white',
   },
 });
 
-export default FilterScreen;
+export default memo(FilterScreen);
