@@ -1,7 +1,3 @@
-Here is a draft for your README file, which includes the necessary details about the project, Context API usage, technical specifications, and instructions on how to run the app locally.
-
----
-
 # Book Shelf App
 
 ## Overview
